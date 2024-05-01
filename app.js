@@ -39,6 +39,21 @@ connection.query(
   }
 );
 
+connection.query(
+  "SELECT * FROM xmember",
+  (error, results) => {
+    console.log(results, 'okay');
+  })
+
+// app.get('/form', (req,res)=>{
+//   // connection.query( 'SELECT * FROM xmember',
+//     (error,results)=>{
+//       res.render('app.js',{xmember:results}); 
+//       console.log("Received data:", req.body);
+//     }
+//   );
+// })
+
 
 // ----------------------------------
 // app.get("/form", (req, res) => {
@@ -61,20 +76,28 @@ connection.query(
 //   });
 // });
 
+// app.post("/form", (req, res) => {
+//   const newData = req.body;
+//   connection.query(
+//     "INSERT INTO xmember (member, location, phone, title) VALUES (?, ?, ?, ?)",
+//     [newData.member, newData.location, newData.phone, newData.title],
+//     (error, results) => {
+//       if (error) {
+//         console.log("Error:", error);
+//         res.status(500).send("Error");
+//       } else {
+//         console.log("successfully");
+//         res.status(200).send("successfully");
+//       }
+//     }
+//   );
+// });
+
 app.post("/form", (req, res) => {
   const newData = req.body;
   connection.query(
     "INSERT INTO xmember (member, location, phone, title) VALUES (?, ?, ?, ?)",
-    [newData.member, newData.location, newData.phone, newData.title],
-    (error, results) => {
-      if (error) {
-        console.log("Error:", error);
-        res.status(500).send("Error");
-      } else {
-        console.log("successfully");
-        res.status(200).send("successfully");
-      }
-    }
+    [newData.member, newData.location, newData.phone, newData.title]
   );
 });
 // --------------------------------DBの編集
