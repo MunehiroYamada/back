@@ -15,7 +15,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-// ---------
 // DBとの接続-----------------------------------------
 const connection = mysql.createConnection({
   host: "localhost",
@@ -33,93 +32,36 @@ connection.connect((err) => {
 });
 
 connection.query(
-  "SELECT count(*)  AS totalCount FROM xmember",
+  "SELECT count(*)  AS totalCount FROM member",
   (error, results) => {
-    console.log(results, 'ok');
+    console.log(results, "ok");
   }
 );
 
-connection.query(
-  "SELECT * FROM xmember",
-  (error, results) => {
-    console.log(results, 'okay');
-  })
+connection.query("SELECT * FROM member", (error, results) => {
+  console.log(results, "okay");
+});
 
-// app.get('/form', (req,res)=>{
-//   // connection.query( 'SELECT * FROM xmember',
-//     (error,results)=>{
-//       res.render('app.js',{xmember:results}); 
-//       console.log("Received data:", req.body);
-//     }
-//   );
-// })
-
-
-// ----------------------------------
-// app.get("/form", (req, res) => {
-//  const params=req.query;
-//  console.log(params)
-//  console.log("Received data:", req.body);
-//   res.status(200).send({
-//     message: " data received successfully",
-//     data: req.query,
-//   });
-// });
-
-// ----------DBへの挿入
-
-// app.post("/form", (req, res) => {
-//   console.log("Received data:", req.body);
-//   res.status(200).send({
-//     message: " data received successfully",
-//     data: req.body,
-//   });
-// });
-
-// app.post("/form", (req, res) => {
-//   const newData = req.body;
-//   connection.query(
-//     "INSERT INTO xmember (member, location, phone, title) VALUES (?, ?, ?, ?)",
-//     [newData.member, newData.location, newData.phone, newData.title],
-//     (error, results) => {
-//       if (error) {
-//         console.log("Error:", error);
-//         res.status(500).send("Error");
-//       } else {
-//         console.log("successfully");
-//         res.status(200).send("successfully");
-//       }
-//     }
-//   );
-// });
-
+// -----getを取得した場合の処理-----------------------------
+app.get("/form", (req, res) => {
+  const params = req.query;
+  console.log(params);
+  console.log("Received data:", req.body);
+  res.status(200).send({
+    message: " data received successfully",
+    data: req.query,
+  });
+});
+// ----------postを取得した場合の処理-----------------------
 app.post("/form", (req, res) => {
   const newData = req.body;
   connection.query(
-    "INSERT INTO xmember (member, location, phone, title) VALUES (?, ?, ?, ?)",
-    [newData.member, newData.location, newData.phone, newData.title]
+    "INSERT INTO member (name, location, phone, title) VALUES (?, ?, ?, ?)",
+    [newData.name, newData.location, newData.phone, newData.title]
   );
 });
-// --------------------------------DBの編集
-// app.patch("/form", (req, res) => {
-//   const newData = req.body;
-//   connection.query(
-//     "INSERT INTO xmember (member, location, phone, title) VALUES (?, ?, ?, ?)",
-//     [newData.member, newData.location, newData.phone, newData.title],
-//     (error, results) => {
-//       if (error) {
-//         console.log("Error:", error);
-//         res.status(500).send("Error");
-//       } else {
-//         console.log("successfully");
-//         res.status(200).send("successfully");
-//       }
-//     }
-//   );
-// });
-// ---------------------------------
 
-
+// ---------ポートについて------------------------------------
 const port = 4000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
