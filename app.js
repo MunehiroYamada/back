@@ -62,7 +62,7 @@ app.post("/detail", (req, res) => {
     }
   );
 });
-// ----------↓検索ポータル用--------------------
+// ----------↓検索モーダル用--------------------
 app.post("/search", (req, res) => {
   const newData = req.body;
   let bindVal = [];
