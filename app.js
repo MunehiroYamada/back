@@ -22,37 +22,22 @@ const connection = mysql.createConnection({
   password: "yamamune1!",
   database: "sakila",
 });
-
-connection.connect((err) => {
-  if (err) {
-    console.log("error connecting: " + err.stack);
-    return;
-  }
-  console.log("success");
+// ------↓一覧画面用--------------------------
+app.post("/all", (req, res) => {
+  connection.query(
+    "SELECT * FROM member LEFT OUTER JOIN assign ON member.memberid = assign.assignmemberid INNER JOIN project ON  assign.assignprojectid= project.projectid",
+    (error, results) => {
+      if (error) {
+        console.error("Error querying database:", error);
+        res.status(500).json({ error: "Error querying database" });
+      } else {
+        console.log("Data fetched successfully:", results);
+        res.status(200).json(results);
+      }
+    }
+  );
 });
-
-connection.query(
-  "SELECT count(*)  AS totalCount FROM member",
-  (error, results) => {
-    console.log(results, "ok");
-  }
-);
-
-connection.query("SELECT * FROM member", (error, results) => {
-  console.log(results, "okay");
-});
-
-// -----getを取得した場合の処理-----------------------------
-app.get("/form", (req, res) => {
-  const params = req.query;
-  console.log(params);
-  console.log("Received data:", req.body);
-  res.status(200).send({
-    message: " data received successfully",
-    data: req.query,
-  });
-});
-// ----------postを取得した場合の処理-----------------------
+// ----------↓登録画面用-----------------------
 app.post("/form", (req, res) => {
   const newData = req.body;
   connection.query(
@@ -60,6 +45,53 @@ app.post("/form", (req, res) => {
     [newData.name, newData.location, newData.phone, newData.title]
   );
 });
+// ---------↓詳細画面用----------------------
+app.post("/detail", (req, res) => {
+  const newData = req.body;
+  connection.query(
+    "SELECT * FROM member LEFT OUTER JOIN assign ON member.memberid = assign.assignmemberid INNER JOIN project ON  assign.assignprojectid= project.projectid WHERE memberid = ?",
+    [newData.memberid],
+    (error, results) => {
+      if (error) {
+        console.error("Error querying database:", error);
+        res.status(500).json({ error: "Error querying database" });
+      } else {
+        console.log("Data fetched successfully:", results);
+        res.status(200).json(results);
+      }
+    }
+  );
+});
+// ----------↓検索ポータル用--------------------
+app.post("/search", (req, res) => {
+  const newData = req.body;
+  let bindVal = [];
+  let sqlSearch =
+    "SELECT * FROM member LEFT OUTER JOIN assign ON member.memberid = assign.assignmemberid INNER JOIN project ON assign.assignprojectid = project.projectid WHERE";
+  if (newData.memberid) {
+    sqlSearch = sqlSearch + " memberid=? AND ";
+    bindVal.push(newData.memberid);
+    console.log(sqlSearch);
+  }
+  if (newData.name) {
+    sqlSearch = sqlSearch + " name LIKE ?" + " AND ";
+    bindVal.push(newData.name + "%");
+    console.log(sqlSearch);
+  }
+  sqlSearch = sqlSearch.slice(0, -5);
+  console.log(sqlSearch);
+  connection.query(sqlSearch, bindVal, (error, results) => {
+    if (error) {
+      console.error("Error querying database:", error);
+      res.status(500).json({ error: "Error querying database" });
+    } else {
+      console.log("Data fetched successfully:", results);
+      res.status(200).json(results);
+    }
+  });
+});
+// -------------↓編集画面---------------
+
 
 // ---------ポートについて------------------------------------
 const port = 4000;
