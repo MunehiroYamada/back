@@ -134,7 +134,6 @@ app.post("/pullPro", (req, res) => {
     }
   });
 });
-
 //ポートについて
 const port = 4000;
 app.listen(port, () => {
